@@ -1,0 +1,28 @@
+def matchingStrings(stringList, queries):
+    # Create a dictionary to count occurrences of each string in stringList
+    count_map = {}
+    
+    # Count occurrences of each string in stringList
+    for string in stringList:
+        if string in count_map:
+            count_map[string] += 1
+        else:
+            count_map[string] = 1
+    
+    # Prepare the result list for each query
+    result = []
+    for query in queries:
+        # Append the count of the query string, defaulting to 0 if not found
+        result.append(count_map.get(query, 0))
+    
+    return result
+
+# Example usage
+if __name__ == '__main__':
+    n = int(input().strip())  # Read the size of stringList
+    stringList = [input().strip() for _ in range(n)]  # Read the strings
+    m = int(input().strip())  # Read the size of queries
+    queries = [input().strip() for _ in range(m)]  # Read the queries
+
+    result = matchingStrings(stringList, queries)  # Call the function
+    print('\n'.join(map(str, result)))  # Print the results
