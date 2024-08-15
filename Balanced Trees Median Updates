@@ -1,0 +1,74 @@
+import heapq
+
+def median(operations):
+    low = []  # Max-heap (inverted to use min-heap)
+    high = []  # Min-heap
+    count = {}  # To keep track of the counts of numbers
+
+    for operation in operations:
+        op, num = operation.split()
+        num = int(num)
+
+        if op == 'a':  # Add operation
+            heapq.heappush(low, -num)  # Add to max-heap (inverted)
+            count[num] = count.get(num, 0) + 1
+
+            # Balance the heaps
+            if low and high and (-low[0] > high[0]):
+                value = -heapq.heappop(low)
+                heapq.heappush(high, value)
+
+            if len(low) > len(high) + 1:
+                value = -heapq.heappop(low)
+                heapq.heappush(high, value)
+            elif len(high) > len(low):
+                value = heapq.heappop(high)
+                heapq.heappush(low, -value)
+
+            # Calculate median
+            if len(low) > len(high):
+                median_value = -low[0]
+                print(median_value)
+            else:
+                median_value = (-low[0] + high[0]) / 2
+                print(f"{median_value:.1f}".rstrip('0').rstrip('.'))
+
+        elif op == 'r':  # Remove operation
+            if count.get(num, 0) > 0:
+                count[num] -= 1
+                if count[num] == 0:
+                    del count[num]
+
+                # Remove from the appropriate heap
+                if num <= -low[0]:
+                    low.remove(-num)
+                    heapq.heapify(low)  # Re-heapify after removal
+                else:
+                    high.remove(num)
+                    heapq.heapify(high)  # Re-heapify after removal
+
+                # Balance the heaps
+                if len(low) > len(high) + 1:
+                    value = -heapq.heappop(low)
+                    heapq.heappush(high, value)
+                elif len(high) > len(low):
+                    value = heapq.heappop(high)
+                    heapq.heappush(low, -value)
+
+                # Calculate median
+                if len(low) == 0:
+                    print("Wrong!")
+                elif len(low) > len(high):
+                    median_value = -low[0]
+                    print(median_value)
+                else:
+                    median_value = (-low[0] + high[0]) / 2
+                    print(f"{median_value:.1f}".rstrip('0').rstrip('.'))
+            else:
+                print("Wrong!")
+
+# Example usage
+if __name__ == '__main__':
+    N = int(input().strip())  # Read the number of operations
+    operations = [input().strip() for _ in range(N)]  # Read each operation
+    median(operations)  # Call the function
