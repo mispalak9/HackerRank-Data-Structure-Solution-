@@ -1,0 +1,46 @@
+import heapq
+
+def runningMedian(a):
+    # Max-heap for the lower half (inverted to use min-heap)
+    low = []  # Max-heap (inverted)
+    # Min-heap for the upper half
+    high = []  # Min-heap
+    medians = []
+
+    for number in a:
+        # Add to max-heap (low)
+        heapq.heappush(low, -number)
+
+        # Ensure the largest of the lower half is less than the smallest of the upper half
+        if low and high and (-low[0] > high[0]):
+            value = -heapq.heappop(low)
+            heapq.heappush(high, value)
+
+        # Balance the sizes of the heaps
+        if len(low) > len(high) + 1:
+            value = -heapq.heappop(low)
+            heapq.heappush(high, value)
+        elif len(high) > len(low):
+            value = heapq.heappop(high)
+            heapq.heappush(low, -value)
+
+        # Calculate the median
+        if len(low) > len(high):
+            median = float(-low[0])
+        else:
+            median = (-low[0] + high[0]) / 2.0
+
+        medians.append(median)
+
+    return medians
+
+# Example usage
+if __name__ == '__main__':
+    n = int(input().strip())  # Read the number of integers
+    a = []
+    for _ in range(n):
+        a.append(int(input().strip()))  # Read each integer
+
+    results = runningMedian(a)  # Call the function
+    for result in results:
+        print(f"{result:.1f}")  # Print the result formatted to one decimal place
