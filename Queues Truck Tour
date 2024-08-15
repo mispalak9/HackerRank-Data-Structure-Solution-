@@ -1,0 +1,30 @@
+def truckTour(petrolpumps):
+    total_petrol = 0
+    total_distance = 0
+    current_balance = 0
+    start_index = 0
+
+    for i in range(len(petrolpumps)):
+        petrol, distance = petrolpumps[i]
+        total_petrol += petrol
+        total_distance += distance
+        current_balance += petrol - distance
+
+        # If current balance is negative, reset the starting index
+        if current_balance < 0:
+            start_index = i + 1
+            current_balance = 0
+
+    # If total petrol is less than total distance, return -1 (not possible)
+    if total_petrol < total_distance:
+        return -1
+
+    return start_index
+
+# Example usage
+if __name__ == '__main__':
+    n = int(input().strip())  # Read the number of petrol pumps
+    petrolpumps = [tuple(map(int, input().strip().split())) for _ in range(n)]  # Read petrol and distance pairs
+
+    result = truckTour(petrolpumps)  # Call the function
+    print(result)  # Print the result
