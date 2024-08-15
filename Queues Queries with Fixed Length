@@ -1,0 +1,48 @@
+from collections import deque
+
+def solve(arr, queries):
+    results = []
+    
+    for k in queries:
+        n = len(arr)
+        max_in_windows = []
+        dq = deque()  # This will store indices of array elements
+
+        # Process the first k elements separately
+        for i in range(k):
+            while dq and arr[dq[-1]] <= arr[i]:
+                dq.pop()  # Remove elements not greater than the current element
+            dq.append(i)
+
+        # The maximum of the first window
+        max_in_windows.append(arr[dq[0]])
+
+        # Process the rest of the elements
+        for i in range(k, n):
+            # Remove elements not in the current window
+            while dq and dq[0] <= i - k:
+                dq.popleft()
+
+            # Remove elements not greater than the current element
+            while dq and arr[dq[-1]] <= arr[i]:
+                dq.pop()
+            dq.append(i)
+
+            # The maximum of the current window
+            max_in_windows.append(arr[dq[0]])
+
+        # Find the minimum of the maximums
+        min_of_max = min(max_in_windows)
+        results.append(min_of_max)
+
+    return results
+
+# Example usage
+if __name__ == '__main__':
+    n, q = map(int, input().strip().split())  # Read n and q
+    arr = list(map(int, input().strip().split()))  # Read the array
+    queries = [int(input().strip()) for _ in range(q)]  # Read each query
+
+    results = solve(arr, queries)  # Call the function
+    for result in results:
+        print(result)  # Print the results
