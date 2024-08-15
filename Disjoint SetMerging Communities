@@ -1,0 +1,58 @@
+## Disjoint SetMerging Communities
+
+class DisjointSet:
+    def __init__(self, n):
+        self.parent = list(range(n + 1))  # Parent array
+        self.size = [1] * (n + 1)          # Size array
+
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])  # Path compression
+        return self.parent[x]
+
+    def union(self, x, y):
+        rootX = self.find(x)
+        rootY = self.find(y)
+
+        if rootX != rootY:
+            # Union by size
+            if self.size[rootX] < self.size[rootY]:
+                self.parent[rootX] = rootY
+                self.size[rootY] += self.size[rootX]
+            else:
+                self.parent[rootY] = rootX
+                self.size[rootX] += self.size[rootY]
+
+    def get_size(self, x):
+        root = self.find(x)
+        return self.size[root]
+
+# Main function to process the input and execute the queries
+def merging_communities(n, queries):
+    ds = DisjointSet(n)
+    results = []
+
+    for query in queries:
+        if query[0] == 'M':
+            # Merge communities
+            ds.union(query[1], query[2])
+        elif query[0] == 'Q':
+            # Query the size of the community
+            results.append(ds.get_size(query[1]))
+
+    return results
+
+# Example usage
+if __name__ == '__main__':
+    n, q = map(int, input().strip().split())  # Read number of people and queries
+    queries = []
+    for _ in range(q):
+        line = input().strip().split()
+        if line[0] == 'M':
+            queries.append([line[0], int(line[1]), int(line[2])])
+        else:
+            queries.append([line[0], int(line[1])])
+
+    results = merging_communities(n, queries)  # Call the function
+    for result in results:
+        print(result)  # Print the results of the queries
